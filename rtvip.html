@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra de VIP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('logo.png'); /* Imagem de fundo */
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #800080; /* Roxo */
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            font-size: 16px;
+            color: #ccc;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            margin-top: 5px;
+        }
+        .summary {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .summary div {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #ccc;
+        }
+        .summary .label {
+            font-weight: bold;
+            color: #800080; /* Roxo */
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #800080; /* Roxo */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #6a006a; /* Roxo mais escuro */
+        }
+        
+        /* Estilo do modal (janela do ticket) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        .modal-content h2 {
+            color: #800080; /* Roxo */
+        }
+        .modal-content p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-close, .btn-discord {
+            background-color: #800080; /* Roxo */
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 48%;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-close:hover, .btn-discord:hover {
+            background-color: #6a006a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Compra de VIP</h1>
+        <div class="input-group">
+            <label for="vip-quantidade">Quantidade de VIP:</label>
+            <select id="vip-quantidade">
+                <option value="1">1 mês</option>
+                <option value="3">3 meses</option>
+                <option value="6">6 meses</option>
+                <option value="12">1 ano</option>
+            </select>
+        </div>
+
+        <!-- Novo campo para selecionar o tipo de VIP -->
+        <div class="input-group">
+            <label for="vip-tipo">Tipo de VIP:</label>
+            <select id="vip-tipo">
+                <option value="comum">VIP Comum</option>
+                <option value="utimeit">VIP Utimeit</option>
+            </select>
+        </div>
+
+        <div class="summary">
+            <div>
+                <span class="label">Subtotal:</span>
+                <span id="subtotal">R$ 10,00</span>
+            </div>
+            <div>
+                <span class="label">Total:</span>
+                <span id="total">R$ 10,00</span>
+            </div>
+        </div>
+        <button onclick="abrirTicketVIP()">PAGAR</button>
+    </div>
+
+    <!-- Modal do ticket -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>🎟️ Ticket de Compra</h2>
+            <p><strong>VIP:</strong> <span id="ticket-vip"></span> meses</p>
+            <p><strong>Tipo:</strong> <span id="ticket-tipo"></span></p>
+            <p><strong>Total:</strong> R$ <span id="ticket-total"></span></p>
+            <p>📸 Tire uma captura de tela deste ticket.</p>
+            <p>📩 Abra um ticket e envie a imagem para confirmar sua compra.</p>
+            <div class="btn-container">
+                <a href="https://discord.gg/XByMFvvXTd" class="btn-discord" target="_blank">Abrir Ticket</a>
+                <button class="btn-close" onclick="fecharModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const valorPorMesComum = 10.00;
+        const valorPorMesUtimeit = 15.00;  // Supondo que o VIP Utimeit tenha um preço maior
+
+        function calcularValorVIP() {
+            const quantidadeVIP = document.getElementById('vip-quantidade').value;
+            const tipoVIP = document.getElementById('vip-tipo').value;
+
+            let valorPorMes;
+            if (tipoVIP === 'comum') {
+                valorPorMes = valorPorMesComum;
+            } else {
+                valorPorMes = valorPorMesUtimeit;
+            }
+
+            const valorTotalVIP = (quantidadeVIP * valorPorMes).toFixed(2);
+            document.getElementById('subtotal').textContent = `R$ ${valorTotalVIP.replace('.', ',')}`;
+            document.getElementById('total').textContent = `R$ ${valorTotalVIP.replace('.', ',')}`;
+        }
+
+        document.getElementById('vip-quantidade').addEventListener('change', calcularValorVIP);
+        document.getElementById('vip-tipo').addEventListener('change', calcularValorVIP);
+
+        function abrirTicketVIP() {
+            const quantidadeVIP = document.getElementById('vip-quantidade').value;
+            const tipoVIP = document.getElementById('vip-tipo').value;
+            const valorTotalVIP = (quantidadeVIP * (tipoVIP === 'comum' ? valorPorMesComum : valorPorMesUtimeit)).toFixed(2);
+
+            document.getElementById('ticket-vip').textContent = quantidadeVIP;
+            document.getElementById('ticket-tipo').textContent = tipoVIP === 'comum' ? 'VIP Comum' : 'VIP Utimeit';
+            document.getElementById('ticket-total').textContent = valorTotalVIP.replace('.', ',');
+
+            document.getElementById('modal').style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').style.display = "none";
+        }
+
+        calcularValorVIP();
+    </script>
+</body>
+</html>
