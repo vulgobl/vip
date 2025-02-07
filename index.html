@@ -151,7 +151,7 @@
             <label for="vip-tipo">Tipo de VIP:</label>
             <select id="vip-tipo">
                 <option value="comum">VIP Comum</option>
-                <option value="utimeit">VIP Utimeit</option>
+                <option value="Ultimate">VIP </option>
             </select>
         </div>
 
@@ -186,7 +186,7 @@
 
     <script>
         const valorPorMesComum = 10.00;
-        const valorPorMesUtimeit = 15.00;  // Supondo que o VIP Utimeit tenha um preço maior
+        const valorPorMesUltimate = 15.00;  // Supondo que o VIP Ultimate tenha um preço maior
 
         function calcularValorVIP() {
             const quantidadeVIP = document.getElementById('vip-quantidade').value;
@@ -196,7 +196,7 @@
             if (tipoVIP === 'comum') {
                 valorPorMes = valorPorMesComum;
             } else {
-                valorPorMes = valorPorMesUtimeit;
+                valorPorMes = valorPorMesUltimate;
             }
 
             const valorTotalVIP = (quantidadeVIP * valorPorMes).toFixed(2);
@@ -210,10 +210,10 @@
         function abrirTicketVIP() {
             const quantidadeVIP = document.getElementById('vip-quantidade').value;
             const tipoVIP = document.getElementById('vip-tipo').value;
-            const valorTotalVIP = (quantidadeVIP * (tipoVIP === 'comum' ? valorPorMesComum : valorPorMesUtimeit)).toFixed(2);
+            const valorTotalVIP = (quantidadeVIP * (tipoVIP === 'comum' ? valorPorMesComum : valorPorMesUltimate)).toFixed(2);
 
             document.getElementById('ticket-vip').textContent = quantidadeVIP;
-            document.getElementById('ticket-tipo').textContent = tipoVIP === 'comum' ? 'VIP Comum' : 'VIP Utimeit';
+            document.getElementById('ticket-tipo').textContent = tipoVIP === 'comum' ? 'VIP Comum' : 'VIP Ultimate';
             document.getElementById('ticket-total').textContent = valorTotalVIP.replace('.', ',');
 
             document.getElementById('modal').style.display = "flex";
